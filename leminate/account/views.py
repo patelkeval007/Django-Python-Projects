@@ -6,10 +6,20 @@ from .models import User
 
 # Create your views here.
 def index(request):
-    return render(request, 'account/login.html')
+    return checkSessionVars(request)
 
 
-def authenticateUser(request):
+def checkSessionVars(request):
+    if 'userid' in request.session and 'is_admin' in request.session:
+        if request.session['is_admin'] == 0:
+            return HttpResponseRedirect(reverse('userpanel'))
+        elif request.session['is_admin'] == 1:
+            return HttpResponseRedirect(reverse('adminpanel'))
+    else:
+        return render(request, 'account/login.html')
+
+
+def authenticateUserLogin(request):
     tEmail = request.POST.get('email')
     tPassword = request.POST.get('password')
     try:
@@ -25,6 +35,7 @@ def authenticateUser(request):
         return render(request, 'account/login.html')
     else:
         request.session['userid'] = id
+        request.session['email'] = email
         request.session['is_admin'] = isAdmin
         if isAdmin == 1:
             return HttpResponseRedirect(reverse('adminpanel'))
@@ -46,3 +57,24 @@ def logout(request):
 
 def register(request):
     return render(request, 'account/register.html')
+
+
+def authenticateUserRegistration(request):
+    tFname = request.POST.get('fname')
+    tLname = request.POST.get('lname')
+    tEmail = request.POST.get('email')
+    tPassword = request.POST.get('password')
+    tCPassword = request.POST.get('c_password')
+
+    if tFname is "" or tLname is "" or tEmail is "" or tPassword is "" or tCPassword is "":
+        return HttpResponseRedirect(reverse('register'))
+    elif tPassword != tCPassword:
+        return HttpResponseRedirect(reverse('register'))
+    else:
+        putData = User(firstname=tFname, lastname=tLname, email=tEmail, password=tPassword)
+        putData.save()
+    return HttpResponseRedirect(reverse('login'))
+
+
+def forgotPassword(request):
+    return render(request, 'account/forgot-password.html')
