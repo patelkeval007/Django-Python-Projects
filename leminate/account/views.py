@@ -24,17 +24,21 @@ def authenticateUserLogin(request):
     tPassword = request.POST.get('password')
     try:
         object = User.objects.filter(email=tEmail, password=tPassword).get()
+        fname = object.firstname
+        lname = object.lastname
         email = object.email
         id = object.id
         password = object.password
         isAdmin = object.is_admin
     except:
-        id, email, password, isAdmin = None, None, None, None
+        id, email, password, isAdmin, fname, lname = None, None, None, None, None, None
 
-    if id is None or email is None or password is None or isAdmin is None:
+    if id is None or email is None or password is None or isAdmin is None or fname is None or lname is None:
         return render(request, 'account/login.html')
     else:
         request.session['userid'] = id
+        request.session['fname'] = fname
+        request.session['lname'] = lname
         request.session['email'] = email
         request.session['is_admin'] = isAdmin
         if isAdmin == 1:
