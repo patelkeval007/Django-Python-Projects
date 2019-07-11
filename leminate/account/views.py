@@ -10,7 +10,7 @@ def index(request):
 
 
 def checkSessionVars(request):
-    if 'userid' in request.session and 'is_admin' in request.session:
+    if 'id' in request.session and 'is_admin' in request.session:
         if request.session['is_admin'] == 0:
             return HttpResponseRedirect(reverse('userpanel'))
         elif request.session['is_admin'] == 1:
@@ -24,23 +24,22 @@ def authenticateUserLogin(request):
     tPassword = request.POST.get('password')
     try:
         object = User.objects.filter(email=tEmail, password=tPassword).get()
-        fname = object.firstname
-        lname = object.lastname
-        email = object.email
         id = object.id
+        name = object.name
+        email = object.email
         password = object.password
         isAdmin = object.is_admin
     except:
-        id, email, password, isAdmin, fname, lname = None, None, None, None, None, None
+        id, email, password, isAdmin, name = None, None, None, None, None
 
-    if id is None or email is None or password is None or isAdmin is None or fname is None or lname is None:
+    if id is None or email is None or password is None or isAdmin is None or name is None:
         return render(request, 'account/login.html')
     else:
-        request.session['userid'] = id
-        request.session['fname'] = fname
-        request.session['lname'] = lname
+        request.session['id'] = id
+        request.session['name'] = name
         request.session['email'] = email
         request.session['is_admin'] = isAdmin
+        print(isAdmin)
         if isAdmin == 1:
             return HttpResponseRedirect(reverse('adminpanel'))
         elif isAdmin == 0:
@@ -51,7 +50,7 @@ def authenticateUserLogin(request):
 
 def logout(request):
     try:
-        del request.session['userid']
+        del request.session['id']
         del request.session['is_admin']
         request.session.flush()
     except KeyError:
@@ -64,19 +63,26 @@ def register(request):
 
 
 def authenticateUserRegistration(request):
-    tFname = request.POST.get('fname')
-    tLname = request.POST.get('lname')
+    tName = request.POST.get('name')
     tEmail = request.POST.get('email')
+    tAddress = request.POST.get('address')
+    tdob = request.POST.get('dob')
+    tm_no = request.POST.get('m_no')
     tPassword = request.POST.get('password')
     tCPassword = request.POST.get('c_password')
 
-    if tFname is "" or tLname is "" or tEmail is "" or tPassword is "" or tCPassword is "":
+    if tName is "" or tEmail is "" or tPassword is "" or tCPassword is "" or tAddress is "" or tdob is "" or tm_no is "":
         return HttpResponseRedirect(reverse('register'))
     elif tPassword != tCPassword:
         return HttpResponseRedirect(reverse('register'))
     else:
-        putData = User(firstname=tFname, lastname=tLname, email=tEmail, password=tPassword)
-        putData.save()
+        try:
+            User.objects.filter(email=tEmail).get()
+            return HttpResponseRedirect(reverse('register'))
+        except:
+            putData = User(name=tName, email=tEmail, address=tAddress, dob=tdob, m_no=tm_no, password=tPassword)
+            type(tdob)
+            putData.save()
     return HttpResponseRedirect(reverse('login'))
 
 

@@ -23,7 +23,7 @@ def about(request):
 
 
 def checkSessionVars(request):
-    if 'userid' in request.session and 'is_admin' in request.session:
+    if 'id' in request.session and 'is_admin' in request.session:
         if request.session['is_admin'] == 0:
             return True
     else:
