@@ -81,7 +81,6 @@ def authenticateUserRegistration(request):
             return HttpResponseRedirect(reverse('register'))
         except:
             putData = User(name=tName, email=tEmail, address=tAddress, dob=tdob, m_no=tm_no, password=tPassword)
-            type(tdob)
             putData.save()
     return HttpResponseRedirect(reverse('login'))
 

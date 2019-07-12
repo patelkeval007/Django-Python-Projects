@@ -21,40 +21,83 @@
       <div class="container">
 
         <!-- Page Heading -->
-        <h1 class="h3 mb-2 text-gray-800">Update Customer Details</h1>
-        <form method="post" action="{% url 'update_user' %}">
-           {% csrf_token %}
-          <input type="hidden" name="id" value="{{user.id}}">
+        <h1 class="h3 mb-2 text-gray-800">Update Product Details</h1>
+        <form method="post" action="{% url 'update_product' %}">
+          {% csrf_token %}
+          <input type="hidden" name="id" value="{{product.id}}">
           <div class="form-group row">
             <label for="inputEmail3" class="col-sm-2 col-form-label">Name</label>
             <div class="col-sm-4">
-              <input type="text" name="name" class="form-control" id="inputEmail3" value="{{ user.name }}">
+              <input type="text" name="name" class="form-control" id="inputEmail3" value="{{product.name}}">
             </div>
           </div>
           <div class="form-group row">
-            <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+            <label for="inputEmail3" class="col-sm-2 col-form-label">Description</label>
             <div class="col-sm-4">
-              <input type="email" name="email" class="form-control" id="inputEmail3" value="{{user.email}}">
+              <input type="text" name="description" class="form-control" id="inputEmail3"
+                     value="{{product.description}}">
             </div>
           </div>
           <div class="form-group row">
-            <label for="inputEmail3" class="col-sm-2 col-form-label">Address</label>
+            <label for="inputEmail3" class="col-sm-2 col-form-label">QOH</label>
             <div class="col-sm-4">
-              <input type="text" name="address" class="form-control" id="inputEmail3" value="{{user.address}}">
+              <input type="number" name="qoh" class="form-control" id="inputEmail3" value="{{product.qoh}}">
             </div>
           </div>
           <div class="form-group row">
-            <label for="inputEmail3" class="col-sm-2 col-form-label">DOB</label>
+            <label for="inputEmail3" class="col-sm-2 col-form-label">Price</label>
             <div class="col-sm-4">
-              <input type="date" name="dob" class="form-control" id="inputEmail3" value="{{user.dob}}">
+              <input type="number" name="price" class="form-control" id="inputEmail3" value="{{product.price}}">
             </div>
           </div>
           <div class="form-group row">
-            <label for="inputEmail3" class="col-sm-2 col-form-label">Mobile</label>
+            <label for="inputEmail3" class="col-sm-2 col-form-label">Category</label>
             <div class="col-sm-4">
-              <input type="tel" name="m_no" class="form-control" id="inputEmail3" pattern="[1-9]{1}[0-9]{9}" value="{{user.m_no}}">
+              <select id="color" class="custom-select" name="cat_id" required>
+                <option value="{{product.cat_id.id}}" selected hidden>{{product.cat_id}}</option>
+                {% for category in category %}
+                <option class="dropdown-item" value="{{category.id}}">{{category.name}}</option>
+                {% endfor %}
+              </select>
             </div>
           </div>
+
+          <div class="form-group row">
+            <label for="inputEmail3" class="col-sm-2 col-form-label">Color</label>
+            <div class="col-sm-4">
+              <select id="color" class="custom-select" name="color_id" required>
+                <option value="{{product.color_id.id}}" selected hidden>{{product.color_id}}</option>
+                {% for color in color %}
+                <option class="dropdown-item" value="{{color.id}}">{{color.name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="inputEmail3" class="col-sm-2 col-form-label">Design</label>
+            <div class="col-sm-4">
+              <select id="color" class="custom-select" name="design_id" required>
+                <option value="{{product.design_id.id}}" selected hidden>{{product.design_id}}</option>
+                {% for design in design %}
+                <option class="dropdown-item" value="{{design.id}}">{{design.name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="inputEmail3" class="col-sm-2 col-form-label">Supplier</label>
+            <div class="col-sm-4">
+              <select id="color" class="custom-select" name="supplier_id" required>
+                <option value="{{product.supplier_id.id}}" selected hidden>{{product.supplier_id}}</option>
+                {% for supplier in supplier %}
+                <option class="dropdown-item" value="{{supplier.id}}">{{supplier.name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
           <div class="form-group row">
             <label for="inputEmail3" class="col-sm-2 col-form-label"></label>
             <div class="col-sm-4">
@@ -105,7 +148,7 @@
         </a>
 
         <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: none;">
-          {% csrf_token %}
+         {% csrf_token %}
         </form>
       </div>
     </div>
