@@ -3,6 +3,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from account.models import User, Supplier, Category, Color, Design, Product, SalesOrder, SalesOrderDetail
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from time import gmtime, strftime
 
 
 def checkSessionVars(request):
@@ -229,11 +232,11 @@ def del_design(request):
 ##################################################################################################
 def show_product(request):
     if checkSessionVars(request):
-            # products = Product.objects.all().select_related('colors')
-            # products = Product.objects.all().values('name', 'price').annotate(n=F('name'), a=F('price'))
-            # products = Product.objects.all().annotate(n=F('name'), a=F('price'))
-            products = Product.objects.all()
-            return render(request, 'adminpanel/show_product.html', {'products': products})
+        # products = Product.objects.all().select_related('colors')
+        # products = Product.objects.all().values('name', 'price').annotate(n=F('name'), a=F('price'))
+        # products = Product.objects.all().annotate(n=F('name'), a=F('price'))
+        products = Product.objects.all()
+        return render(request, 'adminpanel/show_product.html', {'products': products})
     return HttpResponseRedirect(reverse('login'))
 
 
@@ -259,7 +262,13 @@ def add_product(request):
             tcolor = request.POST.get('color')
             tdesign = request.POST.get('design')
             tsupplier = request.POST.get('supplier')
-            putData = Product(name=tname, description=tdescription, qoh=tqoh, price=tprice,
+
+            myfile = request.FILES['myfile']
+            fs = FileSystemStorage()
+            myfile.name = strftime("%d_%m_%y_%H_%M_%S", gmtime()) + '.jpg'
+            filename = fs.save(myfile.name, myfile)
+
+            putData = Product(name=tname, description=tdescription, qoh=tqoh, price=tprice, image=filename,
                               cat_id=Category.objects.get(id=tcategory),
                               color_id=Color.objects.get(id=tcolor), design_id=Design.objects.get(id=tdesign),
                               supplier_id=Supplier.objects.get(id=tsupplier))
@@ -310,7 +319,6 @@ def del_product(request):
             return HttpResponseRedirect(reverse('show_product'))
 
 
-
 ##################################################################################################
 ##################################################################################################
 ###################################           Sales                #########################################
@@ -336,10 +344,10 @@ def update_sales_page(request):
 def update_sales(request):
     try:
         SalesOrderDetail.objects.filter(id=request.POST.get('id')).update(name=request.POST.get('name'),
-                                                              email=request.POST.get('email'),
-                                                              address=request.POST.get('address'),
-                                                              dob=request.POST.get('dob'),
-                                                              m_no=request.POST.get('m_no'))
+                                                                          email=request.POST.get('email'),
+                                                                          address=request.POST.get('address'),
+                                                                          dob=request.POST.get('dob'),
+                                                                          m_no=request.POST.get('m_no'))
         return HttpResponseRedirect(reverse('show_sales'))
     except:
         return HttpResponseRedirect(reverse('show_sales'))

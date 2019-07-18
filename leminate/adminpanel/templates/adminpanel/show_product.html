@@ -47,6 +47,7 @@
                   <th>Color</th>
                   <th>Design</th>
                   <th>Supplier</th>
+                  <th>Image</th>
                   <th>Action</th>
                 </tr>
                 </thead>
@@ -61,6 +62,7 @@
                   <th>Color</th>
                   <th>Design</th>
                   <th>Supplier</th>
+                  <th>Image</th>
                   <th>Action</th>
                 </tr>
                 </tfoot>
@@ -76,6 +78,23 @@
                   <td>{{product.color_id}}</td>
                   <td>{{product.design_id}}</td>
                   <td>{{product.supplier_id}}</td>
+                  <td>
+                    <a href="/media/{{product.image}}" class="btn btn-primary" data-lightbox="image-1">show</a>
+                    <!--                    <div class="modal fade bd-example-modal-lg show" id="myModal" role="dialog">-->
+                    <!--                      <div class="modal-dialog">-->
+                    <!--                        <div class="modal-content">-->
+                    <!--                          <div class="modal-header">-->
+                    <!--                            <button type="button" class="close" data-dismiss="modal">-->
+                    <!--                              <span aria-hidden="true">&times;</span>-->
+                    <!--                            </button>-->
+                    <!--                          </div>-->
+                    <!--                          <div class="modal-body" id="dynamic-content">-->
+                    <!--                            <img src="/media/{{product.image}}" class="img-fluid" alt=""/>-->
+                    <!--                          </div>-->
+                    <!--                        </div>-->
+                    <!--                      </div>-->
+                    <!--                    </div>-->
+                  </td>
                   <td>
 
                     <form style="display: inline" id="firstForm" method="post"
@@ -167,7 +186,9 @@
 <!-- Page level custom scripts -->
 <script src="{% static 'adminpanel/js/demo/datatables-demo.js' %}"></script>
 
+<!--modal-->
+<script src="{% static 'adminpanel/js/lightbox-plus-jquery.min.js' %}"></script>
+
 
 </body>
-
 {% endblock %}

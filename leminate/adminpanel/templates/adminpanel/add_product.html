@@ -22,7 +22,7 @@
 
         <!-- Page Heading -->
         <h1 class="h3 mb-2 text-gray-800">Add Product</h1>
-        <form method="post" action="{% url 'add_product' %}">
+        <form method="post" action="{% url 'add_product' %}" enctype="multipart/form-data">
           {% csrf_token %}
           <input type="hidden" name="id">
           <div class="form-group row">
@@ -95,7 +95,18 @@
               </select>
             </div>
           </div>
-
+          <div class="form-group row">
+            <label for="inputEmail3" class="col-sm-2 col-form-label">Select Image</label>
+            <div class="col-sm-6">
+              <div class="input-group mb-3">
+                <div class="custom-file">
+                  {% csrf_token %}
+                  <input type="file" class="custom-file-input" name="myfile" id="customFile">
+                  <label class="custom-file-label" for="customFile">Choose file</label>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="form-group row">
             <label for="inputEmail3" class="col-sm-2 col-form-label"></label>
             <div class="col-sm-4">
@@ -169,5 +180,17 @@
 
 
 </body>
+<script>
+            $('#customFile').on('change',function(){
+                //get the file name
+                var fileName = $(this).val();
+                //replace the "Choose a file" label
+                $(this).next('.custom-file-label').html(fileName);
+            })
 
+
+
+
+
+</script>
 {% endblock %}
