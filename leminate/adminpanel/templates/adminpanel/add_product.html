@@ -101,7 +101,7 @@
               <div class="input-group mb-3">
                 <div class="custom-file">
                   {% csrf_token %}
-                  <input type="file" class="custom-file-input" name="myfile" id="customFile">
+                  <input type="file" class="custom-file-input" name="myfile" id="customFile" required>
                   <label class="custom-file-label" for="customFile">Choose file</label>
                 </div>
               </div>
@@ -187,10 +187,5 @@
                 //replace the "Choose a file" label
                 $(this).next('.custom-file-label').html(fileName);
             })
-
-
-
-
-
 </script>
 {% endblock %}

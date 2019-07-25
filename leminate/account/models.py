@@ -88,3 +88,20 @@ class SalesOrderDetail(models.Model):
 
     def __str__(self):
         return self.sales_order_id.user_id.name + '-' + self.sales_order_id.date + '-' + self.product_id.name
+
+
+class Cart(models.Model):
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    status = models.BooleanField(default=False)
+    def __str__(self):
+        return self.user_id.name
+
+
+class CartDetail(models.Model):
+    quantity = models.IntegerField(default=0)
+    date_add = models.CharField(max_length=50)
+    product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
+    cart_id = models.ForeignKey(Cart, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.cart_id.user_id.name

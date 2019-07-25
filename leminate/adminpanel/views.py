@@ -1,10 +1,11 @@
+import os
 from django.db.models import F
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from account.models import User, Supplier, Category, Color, Design, Product, SalesOrder, SalesOrderDetail
 from django.conf import settings
-from django.core.files.storage import FileSystemStorage
+from django.core.files.storage import FileSystemStorage, get_storage_class
 from time import gmtime, strftime
 
 
@@ -287,6 +288,7 @@ def update_product_page(request):
             color = Color.objects.all()
             design = Design.objects.all()
             supplier = Supplier.objects.all()
+
             return render(request, 'adminpanel/update_product.html',
                           {'product': product, 'color': color, 'design': design, 'category': category,
                            'supplier': supplier})
@@ -297,14 +299,36 @@ def update_product_page(request):
 
 def update_product(request):
     try:
-        Product.objects.filter(id=request.POST.get('id')).update(name=request.POST.get('name'),
-                                                                 description=request.POST.get('description'),
-                                                                 qoh=request.POST.get('qoh'),
-                                                                 price=request.POST.get('price'),
-                                                                 cat_id=request.POST.get('cat_id'),
-                                                                 color_id=request.POST.get('color_id'),
-                                                                 design_id=request.POST.get('design_id'),
-                                                                 supplier_id=request.POST.get('supplier_id'))
+        if request.FILES['myfile']:
+            myfile = request.FILES['myfile']
+            object = Product.objects.filter(id=request.POST.get('id')).get()
+            img_path=getattr(settings, 'MEDIA_ROOT')+'\\'+object.image
+
+            if os.path.exists(img_path):
+                os.remove(img_path)
+
+            fs = FileSystemStorage()
+            myfile.name = strftime("%d_%m_%y_%H_%M_%S", gmtime()) + '.jpg'
+            filename = fs.save(myfile.name, myfile)
+
+            Product.objects.filter(id=request.POST.get('id')).update(name=request.POST.get('name'),
+                                                                     description=request.POST.get('description'),
+                                                                     qoh=request.POST.get('qoh'),
+                                                                     price=request.POST.get('price'),
+                                                                     image=filename,
+                                                                     cat_id=request.POST.get('cat_id'),
+                                                                     color_id=request.POST.get('color_id'),
+                                                                     design_id=request.POST.get('design_id'),
+                                                                     supplier_id=request.POST.get('supplier_id'))
+        else:
+            Product.objects.filter(id=request.POST.get('id')).update(name=request.POST.get('name'),
+                                                                     description=request.POST.get('description'),
+                                                                     qoh=request.POST.get('qoh'),
+                                                                     price=request.POST.get('price'),
+                                                                     cat_id=request.POST.get('cat_id'),
+                                                                     color_id=request.POST.get('color_id'),
+                                                                     design_id=request.POST.get('design_id'),
+                                                                     supplier_id=request.POST.get('supplier_id'))
         return HttpResponseRedirect(reverse('show_product'))
     except:
         return HttpResponseRedirect(reverse('show_product'))
@@ -313,6 +337,12 @@ def update_product(request):
 def del_product(request):
     if checkSessionVars(request):
         try:
+            object = Product.objects.filter(id=request.POST.get('id')).get()
+            img_path=getattr(settings, 'MEDIA_ROOT')+'\\'+object.image
+
+            if os.path.exists(img_path):
+                os.remove(img_path)
+
             Product.objects.get(id=request.POST.get('id')).delete()
             return HttpResponseRedirect(reverse('show_product'))
         except:
