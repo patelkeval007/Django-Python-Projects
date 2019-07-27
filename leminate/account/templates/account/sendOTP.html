@@ -9,7 +9,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Leminates</title>
+  <title>Send OTP</title>
 
   <!-- Custom fonts for this template-->
   <link href="{% static 'account/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
@@ -39,27 +39,22 @@
               <div class="p-5">
                 <div class="text-center">
                   <h1 class="h4 text-gray-900 mb-2">Forgot Your Password?</h1>
-                  <p class="mb-4">We get it, stuff happens. Just enter your email address below and
-                    we'll send you a link to reset your password!</p>
+                  <p class="mb-4">Just enter your 6-digit OTP below and
+                    we'll redirect you on change password page!</p>
                 </div>
-                <form class="user" method="post" action="{% url 'sendOTP' %}">
+                <form class="user" method="post" action="{% url 'change_password' %}">
                   {% csrf_token %}
                   <div class="form-group">
-                    <input type="email" class="form-control form-control-user"
+                    <input type="hidden" name="otp" value="{{ otp }}">
+                    <input type="hidden" name="email" value="{{ email }}">
+                    <input type="text" class="form-control form-control-user"
                            id="exampleInputEmail" aria-describedby="emailHelp"
-                           placeholder="Enter Email Address..." name="email" required>
+                           placeholder="Enter OTP" name="entered_otp" required>
                   </div>
                   <button type="submit" class="btn btn-primary btn-user btn-block">
-                    Send OTP
+                    Submit
                   </button>
                 </form>
-                <hr>
-                <div class="text-center">
-                  <a class="small" href="{% url 'register' %}">Create an Account!</a>
-                </div>
-                <div class="text-center">
-                  <a class="small" href="{% url 'login' %}">Already have an account? Login!</a>
-                </div>
               </div>
             </div>
           </div>

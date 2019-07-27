@@ -2,6 +2,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from .models import User
+from django.conf import settings
+from django.core.mail import send_mail
+import math, random
 
 
 # Create your views here.
@@ -87,3 +90,59 @@ def authenticateUserRegistration(request):
 
 def forgotPassword(request):
     return render(request, 'account/forgot-password.html')
+
+
+def sendOTP(request):
+    email = request.POST.get('email')
+    if verify_email(email):
+        subject = 'Leminates - Change PASS'
+        otp = generateOTP()
+        msg = 'OTP - ' + otp
+        from_email = settings.EMAIL_HOST_USER
+        to_list = ['']
+        send_mail(subject, msg, from_email, to_list, fail_silently=False)
+        return render(request, 'account/sendOTP.html', {'otp': otp, 'email': email})
+    else:
+        return HttpResponseRedirect(reverse('forgot_password'))
+
+
+def verify_email(email):
+    users = User.objects.all()
+    for t_email in users:
+        if t_email.email == email:
+            return True
+    return False
+
+
+def generateOTP():
+    # Declare a digits variable
+    # which stores all digits
+    digits = "0123456789"
+    OTP = ""
+
+    # length of password can be chaged
+    # by changing value in range
+    for i in range(6):
+        OTP += digits[math.floor(random.random() * 10)]
+    return OTP
+
+
+def change_password(request):
+    otp = request.POST.get('otp')
+    c_otp = request.POST.get('entered_otp')
+    if (otp == c_otp):
+        return render(request, 'account/change_password.html',{'email': request.POST.get('email')})
+    else:
+        return HttpResponseRedirect(reverse('forgot_password'))
+
+
+def check_change_pass(request):
+    p = request.POST.get('password')
+    c_p = request.POST.get('c_password')
+    email = request.POST.get('email')
+    if c_p == p:
+        print(email)
+        User.objects.filter(email=email).update(password=p)
+        return HttpResponseRedirect(reverse('login'))
+    else:
+        return HttpResponseRedirect(reverse('forgot_password'))
