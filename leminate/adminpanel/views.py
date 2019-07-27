@@ -302,7 +302,7 @@ def update_product(request):
         if request.FILES['myfile']:
             myfile = request.FILES['myfile']
             object = Product.objects.filter(id=request.POST.get('id')).get()
-            img_path=getattr(settings, 'MEDIA_ROOT')+'\\'+object.image
+            img_path = getattr(settings, 'MEDIA_ROOT') + '\\' + object.image
 
             if os.path.exists(img_path):
                 os.remove(img_path)
@@ -338,7 +338,7 @@ def del_product(request):
     if checkSessionVars(request):
         try:
             object = Product.objects.filter(id=request.POST.get('id')).get()
-            img_path=getattr(settings, 'MEDIA_ROOT')+'\\'+object.image
+            img_path = getattr(settings, 'MEDIA_ROOT') + '\\' + object.image
 
             if os.path.exists(img_path):
                 os.remove(img_path)
@@ -390,3 +390,51 @@ def del_sales(request):
             return HttpResponseRedirect(reverse('show_sales'))
         except:
             return HttpResponseRedirect(reverse('show_sales'))
+
+
+##################################################################################################
+##################################################################################################
+###################################           Stock                #########################################
+##################################################################################################
+##################################################################################################
+
+def show_stock(request):
+    if checkSessionVars(request):
+        products = Product.objects.all()
+        sales = SalesOrderDetail.objects.all()
+        # for (p, s) in zip(products, sales):
+        #     product.append(p.qoh)
+        #     sale.append(s.quantity)
+        stock = zip(products, sales)
+        return render(request, 'adminpanel/show_stock.html', {'stock': stock})
+
+#
+# def update_stock_page(request):
+#     if checkSessionVars(request):
+#         try:
+#             stock = stockOrderDetail.objects.filter(id=request.POST.get('id')).get()
+#             return render(request, 'adminpanel/update_stock.html', {'stock': stock})
+#         except:
+#             return HttpResponseRedirect(reverse('show_stock'))
+#     return HttpResponseRedirect(reverse('login'))
+#
+#
+# def update_stock(request):
+#     try:
+#         stockOrderDetail.objects.filter(id=request.POST.get('id')).update(name=request.POST.get('name'),
+#                                                                           email=request.POST.get('email'),
+#                                                                           address=request.POST.get('address'),
+#                                                                           dob=request.POST.get('dob'),
+#                                                                           m_no=request.POST.get('m_no'))
+#         return HttpResponseRedirect(reverse('show_stock'))
+#     except:
+#         return HttpResponseRedirect(reverse('show_stock'))
+#
+#
+# def del_stock(request):
+#     if checkSessionVars(request):
+#         try:
+#             stockOrderDetail.objects.get(id=request.POST.get('id')).delete()
+#             return HttpResponseRedirect(reverse('show_stock'))
+#         except:
+#             return HttpResponseRedirect(reverse('show_stock'))

@@ -48,8 +48,8 @@ class Design(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=255)
-    qoh = models.CharField(max_length=255)
-    price = models.CharField(max_length=50)
+    qoh = models.IntegerField(default=0)
+    price = models.IntegerField(default=0)
     image = models.CharField(max_length=255)
     cat_id = models.ForeignKey(Category, on_delete=models.CASCADE)
     color_id = models.ForeignKey(Color, on_delete=models.CASCADE)
@@ -58,15 +58,6 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-
-
-# class ProductImage(models.Model):
-#     path = models.CharField(max_length=255)
-#     # product_id = models.BigIntegerField()
-#     product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
-#
-#     def __str__(self):
-#         return self.path
 
 
 class SalesOrder(models.Model):
@@ -93,6 +84,7 @@ class SalesOrderDetail(models.Model):
 class Cart(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.BooleanField(default=False)
+
     def __str__(self):
         return self.user_id.name
 
@@ -100,6 +92,7 @@ class Cart(models.Model):
 class CartDetail(models.Model):
     quantity = models.IntegerField(default=0)
     date_add = models.CharField(max_length=50)
+    total = models.IntegerField(default=0)
     product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
     cart_id = models.ForeignKey(Cart, on_delete=models.CASCADE)
 

@@ -1,6 +1,6 @@
 {% extends 'adminpanel/base.html' %}
+{% load mathfilters %}
 {% load static %}
-
 {% block base %}
 <body id="page-top">
 
@@ -27,74 +27,41 @@
           </div>
           <div class="card-body">
             <div class="table-responsive">
-              {% if sales|length > 0 %}
               <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                 <tr>
                   <th>No</th>
-                  <th>Date</th>
                   <th>Product</th>
-                  <th>Address</th>
-                  <th>Quantity</th>
-                  <th>Total</th>
-                  <th>Status</th>
-                  <th>Customer</th>
                   <th>Supplier</th>
-                  <th>Action</th>
+                  <th>Purchase</th>
+                  <th>Sales</th>
+                  <th>Available</th>
                 </tr>
                 </thead>
                 <tfoot>
                 <tr>
                   <th>No</th>
-                  <th>Date</th>
                   <th>Product</th>
-                  <th>Address</th>
-                  <th>Quantity</th>
-                  <th>Total</th>
-                  <th>Status</th>
-                  <th>Customer</th>
                   <th>Supplier</th>
-                  <th>Action</th>
+                  <th>Purchase</th>
+                  <th>Sales</th>
+                  <th>Available</th>
                 </tr>
                 </tfoot>
                 <tbody>
-                {% for sales in sales %}
+                {% for products,sales in stock %}
                 <tr>
                   <td>{{ forloop.counter }}</td>
-                  <td>{{sales.sales_order_id.date}}</td>
-                  <td>{{sales.product_id}}</td>
-                  <td>{{sales.sales_order_id.address}}</td>
+                  <td>{{products.name}}</td>
+                  <td>{{products.supplier_id.name}}</td>
+                  <td>{{products.qoh}}</td>
                   <td>{{sales.quantity}}</td>
-                  <td>{{sales.total}}</td>
-                  {% if sales.sales_order_id.status %}
-                  <td>Completed</td>
-                  {% else %}
-                  <td>Pending</td>
-                  {% endif %}
-                  <td>{{sales.sales_order_id.user_id.name}}</td>
-                  <td>{{sales.product_id.supplier_id.name}}</td>
-                  <td>
-                    <form style="display: inline" id="firstForm" method="post"
-                          action="{% url 'update_sales_page' %}">
-                      {% csrf_token %}
-                      <input type="hidden" name="id" value="{{sales.s_o_id}}">
-                      <button class="btn btn-primary btn-circle btn-sm" type="submit">
-                        <i class="fas fa-edit"></i>
-                      </button>
-                    </form>
-                    <form style="display: inline" method="post" action="{% url 'del_sales' %}">
-                      {% csrf_token %}
-                      <input type="hidden" name="id" value="{{sales.s_o_id}}">
-                      <button class="btn btn-danger btn-circle btn-sm" type="submit">
-                        <i class="fas fa-trash"></i>
-                      </button>
-                    </form>
-                  </td>
+                  <td>{{products.qoh|sub:sales.quantity}}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
               </table>
-              {% endif %}
+
             </div>
           </div>
         </div>
