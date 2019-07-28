@@ -98,3 +98,13 @@ class CartDetail(models.Model):
 
     def __str__(self):
         return self.cart_id.user_id.name
+
+class Stock(models.Model):
+    purchase = models.IntegerField(default=0)
+    sales = models.IntegerField(default=0)
+    available = models.IntegerField(default=0)
+    product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.product_id.name
+

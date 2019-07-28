@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from account.models import User, Supplier, Category, Color, Design, Product, SalesOrder, SalesOrderDetail, Cart, \
-    CartDetail
+    CartDetail, Stock
 from time import gmtime, strftime
 
 
@@ -58,7 +58,8 @@ def about(request):
 def product_detail(request):
     if checkSessionVars(request):
         product = Product.objects.filter(id=request.POST.get('id')).get()
-        return render(request, 'userpanel/product-detail.html', {'product': product})
+        stock = Stock.objects.filter(product_id=request.POST.get('id')).get()
+        return render(request, 'userpanel/product-detail.html', {'product': product, 'stock': stock})
     return HttpResponseRedirect(reverse('login'))
 
 
@@ -99,7 +100,8 @@ def product_add_to_cart(request):
                        cart_id=Cart.objects.get(user_id=request.session['id'], status=True), total=total).save()
 
         product = Product.objects.filter(id=request.POST.get('id')).get()
-        return render(request, 'userpanel/product-detail.html', {'product': product})
+        stock = Stock.objects.filter(product_id=request.POST.get('id')).get()
+        return render(request, 'userpanel/product-detail.html', {'product': product, 'stock': stock})
     return HttpResponseRedirect(reverse('login'))
 
 
@@ -148,6 +150,11 @@ def checkout(request):
         for item in cart_details:
             SalesOrderDetail(quantity=item.quantity, total=item.total,
                              product_id=item.product_id, sales_order_id=sales_id).save()
+
+            t_stock = Stock.objects.filter(product_id=item.product_id.id).first()
+            t_available = t_stock.available - item.quantity
+            t_sales = t_stock.sales + item.quantity
+            Stock.objects.filter(product_id=item.product_id.id).update(sales=t_sales, available=t_available)
 
         cart = Cart.objects.get(user_id=User.objects.get(id=request.session['id']))
         cart.delete()

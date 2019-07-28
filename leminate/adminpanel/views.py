@@ -3,10 +3,13 @@ from django.db.models import F
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from account.models import User, Supplier, Category, Color, Design, Product, SalesOrder, SalesOrderDetail
+from account.models import User, Supplier, Category, Color, Design, Product, SalesOrder, SalesOrderDetail, Stock
 from django.conf import settings
-from django.core.files.storage import FileSystemStorage, get_storage_class
+from django.core.files.storage import FileSystemStorage
 from time import gmtime, strftime
+from .render import Render
+import xlwt
+from django.http import HttpResponse
 
 
 def checkSessionVars(request):
@@ -274,6 +277,7 @@ def add_product(request):
                               color_id=Color.objects.get(id=tcolor), design_id=Design.objects.get(id=tdesign),
                               supplier_id=Supplier.objects.get(id=tsupplier))
             putData.save()
+            Stock(purchase=tqoh, sales=0, available=tqoh, product_id=Product.objects.latest('id')).save()
             return HttpResponseRedirect(reverse('show_product'))
         except:
             return HttpResponseRedirect(reverse('show_product'))
@@ -299,6 +303,8 @@ def update_product_page(request):
 
 def update_product(request):
     try:
+        t_product = Product.objects.filter(id=request.POST.get('id')).first()
+        t_qoh = t_product.qoh + int(request.POST.get('qoh'))
         if request.FILES['myfile']:
             myfile = request.FILES['myfile']
             object = Product.objects.filter(id=request.POST.get('id')).get()
@@ -313,22 +319,27 @@ def update_product(request):
 
             Product.objects.filter(id=request.POST.get('id')).update(name=request.POST.get('name'),
                                                                      description=request.POST.get('description'),
-                                                                     qoh=request.POST.get('qoh'),
+                                                                     qoh=t_qoh,
                                                                      price=request.POST.get('price'),
                                                                      image=filename,
                                                                      cat_id=request.POST.get('cat_id'),
                                                                      color_id=request.POST.get('color_id'),
                                                                      design_id=request.POST.get('design_id'),
                                                                      supplier_id=request.POST.get('supplier_id'))
+            Stock.objects.filter(product_id=request.POST.get('id')).update(purchase=request.POST.get('qoh'))
         else:
             Product.objects.filter(id=request.POST.get('id')).update(name=request.POST.get('name'),
                                                                      description=request.POST.get('description'),
-                                                                     qoh=request.POST.get('qoh'),
+                                                                     qoh=t_qoh,
                                                                      price=request.POST.get('price'),
                                                                      cat_id=request.POST.get('cat_id'),
                                                                      color_id=request.POST.get('color_id'),
                                                                      design_id=request.POST.get('design_id'),
                                                                      supplier_id=request.POST.get('supplier_id'))
+            t_stock = Stock.objects.filter(product_id=request.POST.get('id')).first()
+            t_available = t_stock.available + int(request.POST.get('qoh'))
+            t_purchase = t_stock.purchase + int(request.POST.get('qoh'))
+            Stock.objects.filter(product_id=request.POST.get('id')).update(purchase=t_purchase, available=t_available)
         return HttpResponseRedirect(reverse('show_product'))
     except:
         return HttpResponseRedirect(reverse('show_product'))
@@ -400,41 +411,90 @@ def del_sales(request):
 
 def show_stock(request):
     if checkSessionVars(request):
-        products = Product.objects.all()
-        sales = SalesOrderDetail.objects.all()
-        # for (p, s) in zip(products, sales):
-        #     product.append(p.qoh)
-        #     sale.append(s.quantity)
-        stock = zip(products, sales)
+        stock = Stock.objects.all()
         return render(request, 'adminpanel/show_stock.html', {'stock': stock})
 
-#
-# def update_stock_page(request):
-#     if checkSessionVars(request):
-#         try:
-#             stock = stockOrderDetail.objects.filter(id=request.POST.get('id')).get()
-#             return render(request, 'adminpanel/update_stock.html', {'stock': stock})
-#         except:
-#             return HttpResponseRedirect(reverse('show_stock'))
-#     return HttpResponseRedirect(reverse('login'))
-#
-#
-# def update_stock(request):
-#     try:
-#         stockOrderDetail.objects.filter(id=request.POST.get('id')).update(name=request.POST.get('name'),
-#                                                                           email=request.POST.get('email'),
-#                                                                           address=request.POST.get('address'),
-#                                                                           dob=request.POST.get('dob'),
-#                                                                           m_no=request.POST.get('m_no'))
-#         return HttpResponseRedirect(reverse('show_stock'))
-#     except:
-#         return HttpResponseRedirect(reverse('show_stock'))
-#
-#
-# def del_stock(request):
-#     if checkSessionVars(request):
-#         try:
-#             stockOrderDetail.objects.get(id=request.POST.get('id')).delete()
-#             return HttpResponseRedirect(reverse('show_stock'))
-#         except:
-#             return HttpResponseRedirect(reverse('show_stock'))
+
+##################################################################################################
+##################################################################################################
+###################################           Reports                #########################################
+##################################################################################################
+##################################################################################################
+
+def show_report(request):
+    return render(request, 'adminpanel/show_report.html')
+
+
+################################# Stock Report #######################################################
+def show_report_stock(request):
+    return render(request, 'adminpanel/show_report_stock.html')
+
+
+def stock_overall_pdf(request):
+    stocks = Stock.objects.all()
+    params = {
+        'today': strftime("%d/%m/%y", gmtime()),
+        'name': request.session['name'],
+        'stocks': stocks,
+    }
+    return Render.render('adminpanel/stock_overall_pdf.html', params)
+
+
+def stock_month_pdf(request):
+    stocks = Stock.objects.all()
+    date = request.POST.get('date')
+    print(date)
+    params = {
+        'today': strftime("%d/%m/%y", gmtime()),
+        'name': request.session['name'],
+        'stocks': stocks,
+    }
+    return Render.render('adminpanel/stock_month_pdf.html', params)
+
+
+def users_pdf(request):
+    users = User.objects.all()
+    date = request.POST.get('date')
+    print(date)
+    params = {
+        'today': strftime("%d/%m/%y", gmtime()),
+        'name': request.session['name'],
+        'users': users,
+    }
+    return Render.render('adminpanel/users_pdf.html', params)
+
+
+def users_excel(request):
+    # content-type of response
+    response = HttpResponse(content_type='application/ms-excel')
+    # decide file name
+    response['Content-Disposition'] = 'attachment; filename="leminates_customers.xls"'
+    # creating workbook
+    wb = xlwt.Workbook(encoding='utf-8')
+    # adding sheet
+    ws = wb.add_sheet("sheet1")
+    # Sheet header, first row
+    row_num = 0
+    font_style = xlwt.XFStyle()
+    # headers are bold
+    font_style.font.bold = True
+    # column header names, you can use your own headers here
+    columns = ['Name', 'Email', 'DOB', 'Address', 'Contact']
+    # write column headers in sheet
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    data = User.objects.all()  # dummy method to fetch data.
+    for my_row in data:
+        row_num = row_num + 1
+        ws.write(row_num, 0, my_row.name, font_style)
+        ws.write(row_num, 1, my_row.email, font_style)
+        ws.write(row_num, 2, my_row.dob, font_style)
+        ws.write(row_num, 3, my_row.address, font_style)
+        ws.write(row_num, 4, my_row.m_no, font_style)
+
+    wb.save(response)
+    return response

@@ -1,6 +1,6 @@
 {% extends 'adminpanel/base.html' %}
-{% load mathfilters %}
 {% load static %}
+
 {% block base %}
 <body id="page-top">
 
@@ -18,58 +18,53 @@
       {% include 'adminpanel/header.html' %}
 
       <!-- Begin Page Content -->
-      <div class="container-fluid">
+      <div class="container">
 
-        <!-- DataTales Example -->
-        <div class="card shadow mb-4">
-          <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Table</h6>
+        <!-- Page Heading -->
+        <h1 class="h3 text-gray-800">Stock Report</h1>
+        <div class="row m-3">
+          <div class="col-lg-4">
+            <!-- Default Card Example -->
+            <div class="card mb-4">
+              <div class="card-header">
+                Stock Overall
+              </div>
+              <div class="card-body">
+                <form method="post" action="{% url 'stock_overall_pdf' %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="id">
+                  <label for="inputEmail3" class="col-sm-2 col-form-label"></label>
+                  <button class="btn btn-primary btn-block" type="submit">Generate Report</button>
+                </form>
+              </div>
+            </div>
           </div>
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Product</th>
-                  <th>Purchase</th>
-                  <th>Sales</th>
-                  <th>Available</th>
-                </tr>
-                </thead>
-                <tfoot>
-                <tr>
-                  <th>No</th>
-                  <th>Product</th>
-                  <th>Purchase</th>
-                  <th>Sales</th>
-                  <th>Available</th>
-                </tr>
-                </tfoot>
-                <tbody>
-                {% for stock in stock %}
-                <tr>
-                  <td>{{ forloop.counter }}</td>
-                  <td>{{stock.product_id.name}}</td>
-                  <td>{{stock.purchase}}</td>
-                  <td>{{stock.sales}}</td>
-                  <td>{{stock.available}}</td>
-                </tr>
-                {% endfor %}
-                </tbody>
-              </table>
-
+          <div class="col-lg-6">
+            <!-- Default Card Example -->
+            <div class="card mb-4">
+              <div class="card-header">
+                Stock Overall
+              </div>
+              <div class="card-body">
+                <form method="post" action="{% url 'stock_month_pdf' %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="id">
+                  <div class="col-sm p-4">
+                    <input type="date" name="date">
+                  </div>
+                  <button class="btn btn-primary btn-block" type="submit">Generate Report</button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
-
       </div>
       <!-- /.container-fluid -->
 
     </div>
     <!-- End of Main Content -->
 
-    {% include "adminpanel/footer.html" %})
+    {% include "adminpanel/footer.html" %}
 
   </div>
   <!-- End of Content Wrapper -->
@@ -108,6 +103,7 @@
     </div>
   </div>
 </div>
+
 <!-- Bootstrap core JavaScript-->
 <script src="{% static 'adminpanel/vendor/jquery/jquery.min.js' %}"></script>
 <script src="{% static 'adminpanel/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
