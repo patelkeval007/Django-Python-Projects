@@ -160,3 +160,62 @@ def checkout(request):
         cart.delete()
         return HttpResponseRedirect(reverse('userpanel'))
     return HttpResponseRedirect(reverse('login'))
+
+
+##################################################################################################
+##################################################################################################
+###################################           Account                #########################################
+##################################################################################################
+##################################################################################################
+
+def show_myaccount(request):
+    if checkSessionVars(request):
+        user = User.objects.filter(id=request.session['id']).first()
+        return render(request, 'userpanel/show_myaccount.html', {'user': user})
+    return HttpResponseRedirect(reverse('login'))
+
+
+def edit_profile(request):
+    if checkSessionVars(request):
+        User.objects.filter(id=request.session['id']).update(
+            name=request.POST.get('name'), email=request.POST.get('email'), address=request.POST.get('address'),
+            dob=request.POST.get('dob'), m_no=request.POST.get('m_no')
+        )
+        return HttpResponseRedirect(reverse('show_myaccount'))
+    return HttpResponseRedirect(reverse('login'))
+
+
+def show_change_pass(request):
+    if checkSessionVars(request):
+        old_p_status = False
+        update = False
+        c_p_status = False
+        return render(request, 'userpanel/show_change_pass.html',
+                      {'c_p_status': c_p_status, 'update': update, 'old_p_status': old_p_status})
+    return HttpResponseRedirect(reverse('login'))
+
+
+def edit_password(request):
+    if checkSessionVars(request):
+        old_p_status = False
+        update = False
+        c_p_status = False
+        user = User.objects.filter(id=request.session['id']).first()
+        old_pass = request.POST.get('o_password')
+        n_pass = request.POST.get('n_password')
+        c_pass = request.POST.get('c_password')
+        if old_pass == user.password:
+            if n_pass == c_pass:
+                User.objects.filter(id=request.session['id']).update(
+                    password=n_pass
+                )
+                update = True
+                old_p_status = False
+            else:
+                c_p_status = True
+        else:
+            update = False
+            old_p_status = True
+        return render(request, 'userpanel/show_change_pass.html',
+                      {'c_p_status': c_p_status, 'update': update, 'old_p_status': old_p_status})
+    return HttpResponseRedirect(reverse('login'))

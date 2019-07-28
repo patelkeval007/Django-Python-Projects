@@ -42,6 +42,7 @@ urlpatterns = [
     path('del_sales/', views.del_sales, name="del_sales"),
 
     path('show_stock/', views.show_stock, name="show_stock"),
+    path('show_out_stock/', views.show_out_stock, name="show_out_stock"),
 
     path('show_report/', views.show_report, name="show_report"),
     path('show_report_stock/', views.show_report_stock, name="show_report_stock"),
@@ -49,4 +50,6 @@ urlpatterns = [
     path('stock_month_pdf/', views.stock_month_pdf, name="stock_month_pdf"),
     path('users_pdf/', views.users_pdf, name="users_pdf"),
     path('users_excel/', views.users_excel, name="users_excel"),
+
+
 ]

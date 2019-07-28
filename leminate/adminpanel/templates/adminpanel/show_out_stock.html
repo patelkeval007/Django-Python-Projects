@@ -17,21 +17,10 @@
 
       {% include 'adminpanel/header.html' %}
 
-      <!-- Begin Page Content -->
-      <div class="container-fluid">
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
 
-        {% if out_status %}
-        <div class="alert alert-warning" role="alert">
-          Some Products Are Out Of Stock.
-          Please Check <b>Out Of Stock</b> Section.
-        </div>
-        {%endif%}
-        <div class="d-sm-flex align-items-center justify-content-between mb-4">
-          <h1 class="h3 mb-2 text-gray-800">Suppliers</h1>
-          <a href="{% url 'show_out_stock' %}"
-             class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm">Watch Out Of Stocks</a>
-        </div>
-        <!-- DataTales Example -->
+       <!-- DataTales Example -->
         <div class="card shadow mb-4">
           <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">Table</h6>
@@ -59,7 +48,7 @@
                 </tfoot>
                 <tbody>
                 {% for stock in stock %}
-                {% if stock|length != 0%}
+                {% if stock|length == 0%}
                 <tr>
                   <td>{{ forloop.counter }}</td>
                   <td>{{stock.product_id.name}}</td>
@@ -76,11 +65,11 @@
           </div>
         </div>
 
-      </div>
-      <!-- /.container-fluid -->
+        </div>
+        <!-- /.container-fluid -->
 
-    </div>
-    <!-- End of Main Content -->
+      </div>
+      <!-- End of Main Content -->
 
     {% include "adminpanel/footer.html" %})
 

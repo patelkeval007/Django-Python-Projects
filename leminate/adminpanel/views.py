@@ -412,7 +412,16 @@ def del_sales(request):
 def show_stock(request):
     if checkSessionVars(request):
         stock = Stock.objects.all()
-        return render(request, 'adminpanel/show_stock.html', {'stock': stock})
+        out_status = False
+        for item in stock:
+            if item.available == 0:
+                out_status = True
+        return render(request, 'adminpanel/show_stock.html', {'stock': stock,'out_status':out_status})
+
+def show_out_stock(request):
+    if checkSessionVars(request):
+        stock = Stock.objects.all()
+        return render(request, 'adminpanel/show_out_stock.html', {'stock': stock})
 
 
 ##################################################################################################
