@@ -27,7 +27,7 @@
         </div>
         {%endif%}
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-          <h1 class="h3 mb-2 text-gray-800">Suppliers</h1>
+          <h1 class="h3 mb-2 text-gray-800">Stocks</h1>
           <a href="{% url 'show_out_stock' %}"
              class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm">Watch Out Of Stocks</a>
         </div>
@@ -58,8 +58,8 @@
                 </tr>
                 </tfoot>
                 <tbody>
-                {% for stock in stock %}
-                {% if stock|length != 0%}
+                {% for stock in stocks %}
+                {% if stock.available|length == 0%}
                 <tr>
                   <td>{{ forloop.counter }}</td>
                   <td>{{stock.product_id.name}}</td>

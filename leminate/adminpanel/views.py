@@ -10,6 +10,7 @@ from time import gmtime, strftime
 from .render import Render
 import xlwt
 from django.http import HttpResponse
+import csv
 
 
 def checkSessionVars(request):
@@ -229,6 +230,24 @@ def del_design(request):
             return HttpResponseRedirect(reverse('show_design'))
 
 
+def upload_design_csv(request):
+    if checkSessionVars(request):
+        try:
+            csv_file = request.FILES["myfile"]
+            if not csv_file.name.endswith('.csv'):
+                print('Not csv file.')
+            file_data = csv_file.read().decode("utf-8")
+            lines = file_data.split("\n")
+            # loop over the lines and save them in db. If error , store as string and then display
+            for line in lines:
+                fields = line.split(",")
+                Design(name=fields[0]).save()
+
+            return HttpResponseRedirect(reverse('show_design'))
+        except:
+            return HttpResponseRedirect(reverse('show_design'))
+
+
 ##################################################################################################
 ##################################################################################################
 ###################################           Products                #########################################
@@ -416,12 +435,13 @@ def show_stock(request):
         for item in stock:
             if item.available == 0:
                 out_status = True
-        return render(request, 'adminpanel/show_stock.html', {'stock': stock,'out_status':out_status})
+        return render(request, 'adminpanel/show_stock.html', {'stocks': stock, 'out_status': out_status})
+
 
 def show_out_stock(request):
     if checkSessionVars(request):
         stock = Stock.objects.all()
-        return render(request, 'adminpanel/show_out_stock.html', {'stock': stock})
+        return render(request, 'adminpanel/show_out_stock.html', {'stocks': stock})
 
 
 ##################################################################################################
