@@ -51,5 +51,6 @@ urlpatterns = [
     path('stock_month_pdf/', views.stock_month_pdf, name="stock_month_pdf"),
     path('users_pdf/', views.users_pdf, name="users_pdf"),
     path('users_excel/', views.users_excel, name="users_excel"),
+    path('sales_pdf/', views.sales_pdf, name="sales_pdf"),
 
 ]

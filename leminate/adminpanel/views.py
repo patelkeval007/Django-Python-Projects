@@ -527,3 +527,17 @@ def users_excel(request):
 
     wb.save(response)
     return response
+
+
+def sales_pdf(request):
+    sales = SalesOrderDetail.objects.all()
+    date = request.POST.get('date')
+    print(date)
+    params = {
+        'today': strftime("%d/%m/%y", gmtime()),
+        'name': request.session['name'],
+        'sales': sales,
+        'f_date':request.POST.get('f_date'),
+        't_date':request.POST.get('t_date'),
+    }
+    return Render.render('adminpanel/sales_pdf.html', params)

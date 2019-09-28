@@ -99,7 +99,7 @@ def sendOTP(request):
         otp = generateOTP()
         msg = 'OTP - ' + otp
         from_email = settings.EMAIL_HOST_USER
-        to_list = ['']
+        to_list = [email]
         send_mail(subject, msg, from_email, to_list, fail_silently=False)
         return render(request, 'account/sendOTP.html', {'otp': otp, 'email': email})
     else:

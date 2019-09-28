@@ -211,7 +211,6 @@ def show_change_pass(request):
                       {'c_p_status': c_p_status, 'update': update, 'old_p_status': old_p_status})
     return HttpResponseRedirect(reverse('login'))
 
-
 def edit_password(request):
     if checkSessionVars(request):
         old_p_status = False
@@ -236,3 +235,16 @@ def edit_password(request):
         return render(request, 'userpanel/show_change_pass.html',
                       {'c_p_status': c_p_status, 'update': update, 'old_p_status': old_p_status})
     return HttpResponseRedirect(reverse('login'))
+
+def bill_generate(request):
+    sales = SalesOrderDetail.objects.all()
+    date = request.POST.get('date')
+    print(date)
+    params = {
+        'today': strftime("%d/%m/%y", gmtime()),
+        'name': request.session['name'],
+        'sales': sales,
+        'f_date':request.POST.get('f_date'),
+        't_date':request.POST.get('t_date'),
+    }
+    return Render.render('adminpanel/sales_pdf.html', params)

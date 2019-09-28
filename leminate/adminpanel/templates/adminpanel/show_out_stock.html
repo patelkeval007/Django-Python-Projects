@@ -48,7 +48,7 @@
                 </tfoot>
                 <tbody>
                 {% for stock in stocks %}
-                {% if stock.available|length == 0%}
+                {% if stock.available == 0%}
                 <tr>
                   <td>{{ forloop.counter }}</td>
                   <td>{{stock.product_id.name}}</td>

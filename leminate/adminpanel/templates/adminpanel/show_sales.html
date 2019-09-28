@@ -40,7 +40,7 @@
                   <th>Status</th>
                   <th>Customer</th>
                   <th>Supplier</th>
-                  <th>Action</th>
+<!--                  <th>Action</th>-->
                 </tr>
                 </thead>
                 <tfoot>
@@ -54,7 +54,7 @@
                   <th>Status</th>
                   <th>Customer</th>
                   <th>Supplier</th>
-                  <th>Action</th>
+<!--                  <th>Action</th>-->
                 </tr>
                 </tfoot>
                 <tbody>
@@ -73,23 +73,23 @@
                   {% endif %}
                   <td>{{sales.sales_order_id.user_id.name}}</td>
                   <td>{{sales.product_id.supplier_id.name}}</td>
-                  <td>
-                    <form style="display: inline" id="firstForm" method="post"
-                          action="{% url 'update_sales_page' %}">
-                      {% csrf_token %}
-                      <input type="hidden" name="id" value="{{sales.s_o_id}}">
-                      <button class="btn btn-primary btn-circle btn-sm" type="submit">
-                        <i class="fas fa-edit"></i>
-                      </button>
-                    </form>
-                    <form style="display: inline" method="post" action="{% url 'del_sales' %}">
-                      {% csrf_token %}
-                      <input type="hidden" name="id" value="{{sales.s_o_id}}">
-                      <button class="btn btn-danger btn-circle btn-sm" type="submit">
-                        <i class="fas fa-trash"></i>
-                      </button>
-                    </form>
-                  </td>
+<!--                  <td>-->
+<!--                    <form style="display: inline" id="firstForm" method="post"-->
+<!--                          action="{% url 'update_sales_page' %}">-->
+<!--                      {% csrf_token %}-->
+<!--                      <input type="hidden" name="id" value="{{sales.s_o_id}}">-->
+<!--                      <button class="btn btn-primary btn-circle btn-sm" type="submit">-->
+<!--                        <i class="fas fa-edit"></i>-->
+<!--                      </button>-->
+<!--                    </form>-->
+<!--                    <form style="display: inline" method="post" action="{% url 'del_sales' %}">-->
+<!--                      {% csrf_token %}-->
+<!--                      <input type="hidden" name="id" value="{{sales.s_o_id}}">-->
+<!--                      <button class="btn btn-danger btn-circle btn-sm" type="submit">-->
+<!--                        <i class="fas fa-trash"></i>-->
+<!--                      </button>-->
+<!--                    </form>-->
+<!--                  </td>-->
                 </tr>
                 {% endfor %}
                 </tbody>
